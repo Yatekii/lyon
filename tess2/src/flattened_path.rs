@@ -187,7 +187,7 @@ impl Build for Builder {
     }
 }
 
-impl FlatPathBuilder for Builder {
+impl PathBuilder for Builder {
     fn move_to(&mut self, to: Point) {
         nan_check(to);
         let sp_end = self.points.len();
@@ -219,6 +219,26 @@ impl FlatPathBuilder for Builder {
 
     fn current_position(&self) -> Point {
         self.points.last().cloned().unwrap_or(Point::new(0.0, 0.0))
+    }
+
+    fn quadratic_bezier_to(&mut self, ctrl: Point, to: Point) {
+        flatten_quadratic_bezier(self.tolerance, self.current_position(), ctrl, to);
+    }
+
+    fn cubic_bezier_to(&mut self, ctrl1: Point, ctrl2: Point, to: Point) {
+        flatten_cubic_bezier(self.tolerance, self.current_position(), ctrl1, ctrl2, to);
+    }
+
+    fn arc(&mut self, center: Point, radii: Vector, sweep_angle: Angle, x_rotation: Angle) {
+        build_arc_as_quadratic_beziers(
+            self.tolerance,
+            self.current_position(),
+            center,
+            radii,
+            sweep_angle,
+            x_rotation,
+            self
+        );
     }
 }
 
