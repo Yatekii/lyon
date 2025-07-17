@@ -103,6 +103,10 @@ impl Path {
         WithSvg::new(BuilderImpl::new())
     }
 
+    pub fn points(&self) -> &[Point] {
+        &self.points
+    }
+
     /// Creates an Empty `Path`.
     #[inline]
     pub fn new() -> Path {
